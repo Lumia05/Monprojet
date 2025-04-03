@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .card h3 {
+            margin: 0;
+            color: #333;
+        }
+        .card p {
+            font-size: 1.5em;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="card">
+            <h3>Employés</h3>
+            <p>50</p>
+        </div>
+        <div class="card">
+            <h3>Présents</h3>
+            <p>45</p>
+        </div>
+        <div class="card">
+            <h3>Congés</h3>
+            <p>5</p>
+        </div>
+        <div class="card">
+            <h3>Heures travaillées</h3>
+            <p>1800h</p>
+        </div>
+    </div>
+</body>
+</html>
