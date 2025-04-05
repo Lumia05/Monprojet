@@ -8,6 +8,7 @@ use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -27,28 +28,29 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-
-                FileUpload::make('profil')
-                    ->label('Profile')
-                    ->avatar(),
-                
-                TextInput::make('name'),
-                TextInput::make('email'),
-                TextInput::make('telephone'),
-                Select::make('sexe')->options([
-                    'F' => 'Feminin',
-                    'M' => 'Masculin'
-                ]),
-                DatePicker::make('date_de_naissance')
-                    ->displayFormat('d/m/Y'),
-                Select::make('role')->options([
-                    'employee' => 'Employee',
-                    'admin' => 'Administrateur',
-                    'super_admin' => 'Super administrateur'
-                ])
-
-                
-                
+                Section::make('Profile')
+                    ->schema([
+                        FileUpload::make('profil')
+                            ->label('Profile')
+                            ->avatar(),
+                    ]),
+                Section::make('Extra Informations')
+                    ->schema([         
+                        TextInput::make('name'),
+                        TextInput::make('email'),
+                        TextInput::make('telephone'),
+                        Select::make('sexe')->options([
+                            'F' => 'Feminin',
+                            'M' => 'Masculin'
+                        ]),
+                        DatePicker::make('date_de_naissance')
+                            ->displayFormat('d/m/Y'),
+                        Select::make('role')->options([
+                            'employee' => 'Employee',
+                            'admin' => 'Administrateur',
+                            'super_admin' => 'Super administrateur'
+                        ])
+                    ])->columns(2)
             ]);
     }
 

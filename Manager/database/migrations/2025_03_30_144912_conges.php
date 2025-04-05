@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('date_debut');
             $table->date('date_fin');
             $table->enum('type', ['conge_paye', 'conge_sans_solde']);
-            $table->enum('status', ['en_attente', 'approuve', 'rejete']);
+            $table->enum('status', ['en_attente', 'approuve', 'rejete'])->default('en_attente');
             $table->text('motif');
         });
     }
