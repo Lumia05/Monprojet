@@ -9,7 +9,7 @@
         <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data">
             @csrf
 
-            <div class="">
+            {{-- <div class="">
                 <div for="profil" class="cursor-pointer relative md:left-[25%] left-[10%] rounded-full border-2 w-48 h-48 border-gray-100">
                     <img
                         src=""
@@ -22,6 +22,28 @@
                     id="profil" 
                     accept="image/*" 
                     class="mt-1 hidden w-full  text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                >
+                @error('profil')
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div> --}}
+
+            <div class="mb-4">
+                <label for="profil" class="cursor-pointer relative md:left-[25%] left-[10%] rounded-full border-2 w-48 h-48 border-gray-100 block">
+                    <img
+                        id="profil-preview"
+                        src="{{ asset('images/default-avatar.png') }}" 
+                        class="w-full h-full object-cover border-0 rounded-full"
+                        alt="Photo de profil"
+                    />
+                </label>
+                <input 
+                    type="file" 
+                    name="profil" 
+                    id="profil" 
+                    accept="image/*" 
+                    class="mt-1 hidden"
+                    onchange="previewImage(event)" 
                 >
                 @error('profil')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -164,6 +186,21 @@
                 </button>
             </div>
         </form>
+
+        <script>
+            function previewImage(event) {
+                const file = event.target.files[0];
+                const preview = document.getElementById('profil-preview');
+        
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        preview.src = e.target.result; // Met à jour l'image avec l'aperçu
+                    };
+                    reader.readAsDataURL(file); // Convertit le fichier en URL pour l'affichage
+                }
+            }
+        </script>
 
         <!-- Link to Login -->
         <p class="text-center mt-4 text-sm text-gray-600">

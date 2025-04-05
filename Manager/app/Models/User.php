@@ -26,7 +26,7 @@ class User extends Authenticatable
         'telephone',
         'poste',
         'sexe',
-        // 'profil',
+        'profil',
         'date_de_naissance'
     ];
 

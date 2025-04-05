@@ -21,10 +21,18 @@ class AuthController extends Controller
                 'telephone' => 'string|required',
                 'password' => 'required|min:8',
                 'sexe' => 'string|required',
-                // 'profil' => 'required|image|mimes:png,jpg,gif,jpeg|max=50000',
+                'profil' => 'nullable|image|mimes:png,jpg,gif,jpeg|max:50000',
                 'adresse' => 'required|string',
                 'poste' => 'string|required',
+                'date_de_naissance' => 'required|date',
             ]);
+
+            // Log::info('user:', $validateData);
+            $user = User::where('email', $request->email)->first();
+            if ($user) {
+                return response()->json(['message' => 'User already exists'], 409);
+            }
+            
 
             $userData = $request->except('profil');
 
@@ -50,10 +58,10 @@ class AuthController extends Controller
             $newUser->profil = $filename ;
             $newUser->save();
 
-            return view('welcome');
+            return redirect()->route('login')->with('success', 'User created successfully');
 
         } catch (\Exception $e){
-            Log::error($e);
+            return back()->withErrors(['error' => 'Une erreur est survenue : ' . $e->getMessage()]);
         }
     }
 
