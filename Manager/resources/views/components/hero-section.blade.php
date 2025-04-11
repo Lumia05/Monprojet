@@ -12,7 +12,7 @@
         </p>
         <div class="flex justify-center gap-4">
             <a 
-                href="{{ route('filament.admin.auth.login') }}" 
+                href="{{ route('login') }}" 
                 class="px-6 py-3 bg-white text-blue-500 rounded-sm font-medium hover:bg-gray-100 transition"
             >
                 Log in

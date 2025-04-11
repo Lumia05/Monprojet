@@ -3,14 +3,22 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 
 class Presence extends Model
 {
-    protected $fillable =   [
+
+    use softDeletes;
+
+
+    protected $fillable = [
         'user_id',
+        'date',
         'heure_entr',
         'heure_srt',
-        'status'
+        'status',
+        'qr_token'
     ];
 
     public function user()

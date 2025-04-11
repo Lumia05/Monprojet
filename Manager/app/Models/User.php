@@ -27,7 +27,8 @@ class User extends Authenticatable
         'poste',
         'sexe',
         'profil',
-        'date_de_naissance'
+        'date_de_naissance',
+        'employee_code'
     ];
 
     /**
@@ -53,6 +54,17 @@ class User extends Authenticatable
         ];
     }
 
+    public function canAccessPanel(\Filament\Panel $panel): bool
+    {
+        if ($panel->getId() === 'admin') {
+            return $this->role === 'super_admin';
+        }
+        if ($panel->getId() === 'employee') {
+            return $this->role === 'employee';
+        }
+        return false;
+    }
+
     public function presences()
     {
         return $this->hasMany(Presence::class);
@@ -61,5 +73,14 @@ class User extends Authenticatable
     public function conges()
     {
         return $this->hasMany(Conge::class);
+    }
+    public function approvedConge()
+    {
+        return $this->hasMany(User::class , 'approved_by');
+    }
+
+    public function approvedHeureSup()
+    {
+        return $this->hasMany(User::class , 'approved_by');
     }
 }

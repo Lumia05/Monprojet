@@ -21,6 +21,8 @@ return new class extends Migration
             $table->enum('type', ['conge_paye', 'conge_sans_solde']);
             $table->enum('status', ['en_attente', 'approuve', 'rejete'])->default('en_attente');
             $table->text('motif');
+            $table->foreignId('approved_by')->nullable()->constrained('users')->cnDelete('set null');
+
         });
     }
 

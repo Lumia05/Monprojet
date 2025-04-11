@@ -14,7 +14,7 @@
                    Sign up
                 </a>
                 <a
-                    href="{{ route('filament.admin.auth.login') }}" 
+                    href="{{ route('login') }}" 
                     class="transition-all px-3 py-2 cursor-pointer hover:bg-white hover:text-blue-900 rounded-lg"
                 >
                     Sign in
@@ -22,15 +22,22 @@
                 @endguest
                 
                 @auth()
-                    <a 
+                    {{-- <a 
                         class="transition-all px-3 py-2 cursor-pointer hover:bg-white hover:text-blue-900 rounded-lg"
                         href="{{ route('filament.admin.pages.dashboard') }}"
                     >
                         Dashboard
-                    </a>
-                    <div class="transition-all px-3 py-2 cursor-pointer hover:bg-white hover:text-blue-900 rounded-lg">
-                        Log out
-                    </div>
+                    </a> --}}
+                    <form method="POST" action={{ route('deconnecter') }}
+                    >
+                        
+                        <button
+                            type="submit"
+                            class="transition-all px-3 py-2 cursor-pointer hover:bg-white hover:text-blue-900 rounded-lg"
+                        >
+                            Log out
+                        </button> 
+                    </form>
                 @endauth
             </div>
         </div>

@@ -15,10 +15,14 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->softDeletes();
+            $table->date('date');
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->timestamp("heure_entr")->nullable();
-            $table->timestamp("heure_srt")->nullable();
+            $table->time("heure_entr")->nullable();
+            $table->time("heure_srt")->nullable();
             $table->enum('status', ['absent', 'present', 'en conge']);
+            $table->string('qr_token')->nullable();
+
+            // $table->softDeletes();
 
             // $table->string('id');
 

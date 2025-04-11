@@ -15,8 +15,12 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Str;
 
 class UserResource extends Resource
 {
@@ -31,14 +35,31 @@ class UserResource extends Resource
                 Section::make('Profile')
                     ->schema([
                         FileUpload::make('profil')
+                            ->image()
+                            ->directory('Avatar')
+                            ->disk('public')
+                            ->imageEditor()
+                            ->imageEditorAspectRatios(['1:1'])
+                            ->maxSize(5000)
                             ->label('Profile')
+                            ->extraAttributes(['class' => 'flex items-center justify-center'])
                             ->avatar(),
                     ]),
                 Section::make('Extra Informations')
-                    ->schema([         
+                    ->schema([
                         TextInput::make('name'),
-                        TextInput::make('email'),
-                        TextInput::make('telephone'),
+                        TextInput::make('email')
+                        ->email()
+                        ->required()
+                        ->unique(User::class, 'email', ignorable: fn ($record) => $record),
+                        TextInput::make('password')
+                            ->password()
+                            ->required(fn (string $op) => $op === 'create')
+                            ->visible(fn (string $operation) => $operation === 'create')
+                            ->dehydrateStateUsing(fn($state) => Hash::make($state)),
+                        TextInput::make('telephone')
+                            ->tel()
+                            ->required(),
                         Select::make('sexe')->options([
                             'F' => 'Feminin',
                             'M' => 'Masculin'
@@ -49,7 +70,18 @@ class UserResource extends Resource
                             'employee' => 'Employee',
                             'admin' => 'Administrateur',
                             'super_admin' => 'Super administrateur'
-                        ])
+                        ]),
+                        TextInput::make('adresse'),
+                        Select::make('poste')
+                            ->options([
+                                'consultant' => 'Consultant' ,
+                                'administrateur' => 'Administrateur'
+                            ]),
+                        TextInput::make('employee_code')
+                            ->required()
+                            ->unique(User::class, 'employee_code', ignorable: fn ($record) => $record)
+                            ->maxLength(255)
+
                     ])->columns(2)
             ]);
     }
@@ -58,6 +90,18 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('deleted_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\ImageColumn::make('profil')
                     ->label('Profile')
                     ->circular()
@@ -75,20 +119,47 @@ class UserResource extends Resource
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('role')
-                    ->sortable(),
+                    ->sortable()
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'employee' => 'info',
+                        'admin' => 'blue',
+                        'super_admin' => 'success',
+                    }),
                 Tables\Columns\TextColumn::make('adresse')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('poste')
                     ->searchable()
                     ->sortable(),
-                
+
             ])
             ->filters([
                 //
             ])
             ->actions([
+                Tables\Actions\Action::make('downloadBadge')
+                ->label('Download Badge')
+                ->icon('heroicon-o-qr-code')
+                ->action(function (User $record) {
+                    $fileName = 'qrcode-' . Str::uuid() . '.png';
+                    $filePath = storage_path('app/public/qrcodes/' . $fileName);
+
+                    $qrCodeBase64 = base64_encode(QrCode::format('svg')->size(200)->generate($record->employee_code));
+
+                    // Generate the PDF
+                    $pdf = Pdf::loadView('components.badge', [
+                        'user' => $record,
+                        'qrCodeBase64' => $qrCodeBase64,
+                    ]);
+                    return response()->streamDownload(
+                        fn () => print($pdf->output()),
+                        "badge-{$record->employee_code}.pdf"
+                    );
+                })
+                ->color('primary'),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
